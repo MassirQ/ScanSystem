@@ -3,7 +3,9 @@ const mysql = require('mysql');
 const cors = require('cors');
 
 const app = express();
-app.use(cors());
+app.use(cors({
+  origin: 'https://massirq.github.io/Scan',
+}));
 
 app.use(express.json());
 

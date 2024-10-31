@@ -1,0 +1,9 @@
+services:
+      scan_backend:
+        command: ["node", "expressServer.js"]
+        container_name: backend
+        build:
+            context: .
+            dockerfile: dockerfile
+        ports:
+          - 5001:5001

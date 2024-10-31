@@ -1,0 +1,200 @@
+.App {
+  text-align: center;
+}
+
+.App-logo {
+  height: 40vmin;
+  pointer-events: none;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .App-logo {
+    animation: App-logo-spin infinite 20s linear;
+  }
+}
+
+.App-header {
+  background-color: #282c34;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-size: calc(10px + 2vmin);
+  color: white;
+}
+
+.App-link {
+  color: #61dafb;
+}
+
+@keyframes App-logo-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+/* App.css */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Arial', sans-serif;
+  background-color: #f4f6f8;
+  color: #333;
+}
+
+.app-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  padding: 20px;
+}
+
+.app-header {
+  background-color: #4CAF50;
+  width: 100%;
+  padding: 20px;
+  text-align: center;
+  color: white;
+  border-radius: 10px;
+}
+
+.app-header h1 {
+  font-size: 2rem;
+  margin-bottom: 15px;
+}
+
+.barcode-input {
+  padding: 10px;
+  font-size: 1.2rem;
+  border: 2px solid #ccc;
+  border-radius: 5px;
+  width: 300px;
+  outline: none;
+  transition: border-color 0.3s;
+}
+
+.barcode-input:focus {
+  border-color: #4CAF50;
+}
+
+.product-info {
+  margin-top: 30px;
+  width: 100%;
+  max-width: 400px;
+  text-align: center;
+}
+
+.scanned-barcode {
+  font-size: 1rem;
+  color: #777;
+  margin-bottom: 20px;
+}
+
+.product-card {
+  background-color: white;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  text-align: left;
+}
+
+.product-card h2 {
+  font-size: 1.5rem;
+  color: #4CAF50;
+}
+
+.product-card p {
+  font-size: 45px;
+  margin-top: 10px;
+}
+
+.error-message {
+  color: red;
+  font-size: 1.2rem;
+}
+
+.print-button {
+  margin-top: 10px;
+  padding: 10px 20px;
+  font-size: 1em;
+  background-color: #28a745;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.print-button:hover {
+  background-color: #218838;
+}
+
+.tabs {
+  margin-bottom: 20px;
+}
+
+.tabs button {
+  margin-right: 10px;
+  padding: 10px 15px;
+  cursor: pointer;
+  border: none;
+  background-color: #f0f0f0;
+  border-radius: 5px;
+  transition: background-color 0.3s;
+}
+
+.tabs button.active {
+  background-color: #007bff;
+  color: white;
+}
+
+.tabs button:hover {
+  background-color: #e0e0e0;
+}
+.add-product-form {
+  background-color: #f9f9f9; /* Lys baggrund */
+  border: 1px solid #ddd; /* Lys kant */
+  border-radius: 8px; /* Rundede hjørner */
+  padding: 20px; /* Indre margin */
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1); /* Blød skygge */
+  max-width: 400px; /* Maksimal bredde */
+  margin: 20px auto; /* Centreret */
+}
+
+.add-product-form h2 {
+  color: #333; /* Mørkere tekstfarve */
+  margin-bottom: 15px; /* Margin under overskrift */
+  text-align: center; /* Centreret tekst */
+}
+
+.add-product-form input {
+  width: 100%; /* Fuldbredde input */
+  padding: 10px; /* Indre margin */
+  margin: 10px 0; /* Margin mellem inputfelter */
+  border: 1px solid #ccc; /* Lys kant */
+  border-radius: 4px; /* Rundede hjørner */
+  font-size: 16px; /* Skriftstørrelse */
+}
+
+.add-product-button {
+  background-color: #4CAF50; /* Grøn baggrund */
+  color: white; /* Hvid tekst */
+  border: none; /* Ingen kant */
+  padding: 10px 15px; /* Indre margin */
+  border-radius: 4px; /* Rundede hjørner */
+  font-size: 16px; /* Skriftstørrelse */
+  cursor: pointer; /* Pointer ved hover */
+  transition: background-color 0.3s; /* Glidende overgang */
+}
+
+.add-product-button:hover {
+  background-color: #45a049; /* Mørkere grøn ved hover */
+}

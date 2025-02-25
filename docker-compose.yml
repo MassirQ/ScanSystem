@@ -6,7 +6,7 @@ services:
     restart: always
     container_name: backend
     depends_on:
-      - scan_db
+      - db
     build:
       context: .
       dockerfile: dockerfile
@@ -23,7 +23,7 @@ services:
       MYSQL_ROOT_PASSWORD: "${DATABASE_ROOT_PASSWORD}"
     volumes:
       - type: "bind"
-        source: "./dump"
+        source: "./dump/dump.sql"
         target: $DUMP_TARGET
       - type: "volume"
         source: persistance

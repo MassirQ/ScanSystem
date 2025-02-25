@@ -1,12 +1,13 @@
 const express = require("express");
-const mysql = require("mysql2/promise"); // Promise-based API
+const mysql = require("mysql2/promise");
 const cors = require("cors");
+
 (async () => {
   const app = express();
   app.use(
-    cors({
-      origin: "*",
-    })
+      cors({
+        origin: "*",
+      })
   );
 
   app.use(express.json());
@@ -18,100 +19,109 @@ const cors = require("cors");
     database: "qb_aal_dk_db_data",
   });
 
-   db.connect((err) => {
-    if (err) {
-      console.error("Fejl ved forbindelse til MySQL:", err);
-      return;
-    }
-    console.log("Forbundet til MySQL!");
-  });
+  console.log("Forbundet til MySQL!");
 
   app.get("/api/products", async (req, res) => {
     try {
       const query = "SELECT * FROM products";
       const [rows] = await db.query(query);
-      res.status(200).json(rows)
+      res.status(200).json(rows);
     } catch (error) {
-      res.status(500).send(error)
+      res.status(500).json({ error: "Fejl ved hentning af produkter" });
     }
   });
 
-  app.get("/api/product/:barcode", (req, res) => {
-    const barcode = req.params.barcode;
+  app.get("/api/product/:barcode", async (req, res) => {
+    try {
+      const barcode = req.params.barcode;
+      const query = "SELECT * FROM products WHERE barcode = ?";
+      const [results] = await db.query(query, [barcode]);
 
-    if (!barcode) {
-      return res.status(400).json({ error: "Barcode er påkrævet" });
-    }
-
-    const query = "SELECT * FROM products WHERE barcode = ?";
-    db.query(query, [barcode], (err, results) => {
-      if (err) {
-        res.status(500).json({ error: "Fejl ved hentning af produkt" });
-      } else if (results.length === 0) {
-        res.status(404).json({ error: "Produkt ikke fundet" });
+      if (results.length === 0) {
+        res.status(404).json({ error: "Produktet er ikke registreret" });
       } else {
-        res.json(results);
+        res.json(results[0]);
       }
-    });
+    } catch (error) {
+      res.status(500).json({ error: "Fejl ved hentning af produkt" });
+    }
   });
 
-  app.post("/api/products", (req, res) => {
-    console.log("Modtaget req.body:", req.body);
+  app.post("/api/RegisterProducts", async (req, res) => {
+    try {
+      const { barcode, productBrand, productName, productWeight, retailPrice } = req.body;
 
-    const { barcode, productBrand, productName, productWeight, retailPrice } =
-      req.body;
-
-    if (
-      !barcode ||
-      !productBrand ||
-      !productName ||
-      !productWeight ||
-      !retailPrice
-    ) {
-      return res.status(400).send("Alle felter skal udfyldes");
-    }
-
-    const getIdQuery = "SELECT MAX(id) AS maxId FROM products";
-
-    db.query(getIdQuery, (err, result) => {
-      if (err) {
-        return res.status(500).json({ error: "Fejl ved hentning af maks id" });
+      if (!barcode || !productBrand || !productName || !productWeight || !retailPrice) {
+        return res.status(400).json({ error: "Alle felter skal udfyldes" });
       }
 
-      const nextId = result[0].maxId ? result[0].maxId + 1 : 2251;
+      const [existing] = await db.query("SELECT * FROM products WHERE barcode = ?", [barcode]);
+      if (existing.length > 0) {
+        return res.status(409).json({ error: "Produktet eksisterer allerede" });
+      }
+
+      // Generer nyt ID
+      const [idResult] = await db.query("SELECT MAX(id) AS maxId FROM products");
+      const nextId = idResult[0].maxId ? idResult[0].maxId + 1 : 2251;
 
       const imageUrl = `https://qbaalborg.s3.eu-north-1.amazonaws.com/${barcode}.jpg`;
 
-      const query =
-        "INSERT INTO products (id, barcode, retailPrice, brandName, productName, productWeight, imageUrl) VALUES (?, ?, ?, ?, ?, ?, ?)";
-
-      db.query(
-        query,
-        [
-          nextId,
-          barcode,
-          retailPrice,
-          productBrand,
-          productName,
-          productWeight,
-          imageUrl,
-        ],
-        (err, result) => {
-          if (err) {
-            return res
-              .status(500)
-              .json({ error: "Fejl ved indsættelse af produkt" });
-          } else {
-            return res
-              .status(201)
-              .json({
-                message: "Produkt tilføjet succesfuldt",
-                productId: result.insertId,
-              });
-          }
-        }
+      await db.query(
+          "INSERT INTO products (id, barcode, retailPrice, brandName, productName, productWeight, imageUrl) VALUES (?, ?, ?, ?, ?, ?, ?)",
+          [nextId, barcode, retailPrice, productBrand, productName, productWeight, imageUrl]
       );
-    });
+
+      res.status(201).json({
+        message: "Produkt tilføjet succesfuldt",
+        barcode: barcode
+      });
+    } catch (error) {
+      console.error("Fejl:", error);
+      res.status(500).json({ error: "Serverfejl ved oprettelse" });
+    }
+  });
+
+  app.put("/api/product/:barcode", async (req, res) => {
+    try {
+      const barcode = req.params.barcode;
+      const { productBrand, productName, productWeight, retailPrice } = req.body;
+
+      const [existing] = await db.query("SELECT * FROM products WHERE barcode = ?", [barcode]);
+      if (existing.length === 0) {
+        return res.status(404).json({ error: "Produktet findes ikke" });
+      }
+
+      await db.query(
+          `UPDATE products SET
+          brandName = ?,
+          productName = ?,
+          productWeight = ?,
+          retailPrice = ?
+        WHERE barcode = ?`,
+          [productBrand, productName, productWeight, retailPrice, barcode]
+      );
+
+      res.json({ message: "Produkt opdateret succesfuldt" });
+    } catch (error) {
+      console.error("Fejl:", error);
+      res.status(500).json({ error: "Serverfejl ved opdatering" });
+    }
+  });
+
+  app.delete("/api/product/:barcode", async (req, res) => {
+    try {
+      const barcode = req.params.barcode;
+      const [result] = await db.query("DELETE FROM products WHERE barcode = ?", [barcode]);
+
+      if (result.affectedRows === 0) {
+        return res.status(404).json({ error: "Produktet findes ikke" });
+      }
+
+      res.json({ message: "Produkt slettet succesfuldt" });
+    } catch (error) {
+      console.error("Fejl:", error);
+      res.status(500).json({ error: "Serverfejl ved sletning" });
+    }
   });
 
   const PORT = 5001;

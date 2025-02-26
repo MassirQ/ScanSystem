@@ -1,14 +1,24 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
-import '../App.css'; // Importer CSS-filen
+import productService from '../services/productService';
+import '../App.css';
 
-const ScannerPage = () => {
+const ScannerPage = ({ onProductScanned }) => {
     const [barcode, setBarcode] = useState('');
     const [product, setProduct] = useState(null);
     const [error, setError] = useState('');
     const navigate = useNavigate();
 
+    // Nulstil staten, når en vare er scannet og brugeren er navigeret til /actions
+    useEffect(() => {
+        if (product) {
+            setBarcode(''); // Nulstil stregkoden
+            setProduct(null); // Nulstil produktet
+            setError(''); // Nulstil fejlmeddelelsen
+        }
+    }, [product]);
+
+    // Lyt efter Enter-tasten
     useEffect(() => {
         const handleKeyPress = (e) => {
             if (e.key === 'Enter') {
@@ -20,6 +30,7 @@ const ScannerPage = () => {
         return () => window.removeEventListener('keydown', handleKeyPress);
     }, [barcode]);
 
+    // Hent produktdata
     const fetchProduct = useCallback(async (barcode) => {
         if (!barcode) {
             setProduct(null);
@@ -27,10 +38,12 @@ const ScannerPage = () => {
             return;
         }
         try {
-            const response = await axios.get(`http://localhost:5001/api/product/${barcode}`);
-            if (response.status === 200 && response.data) {
-                setProduct(response.data);
+            const product = await productService.searchProduct(barcode);
+            if (product) {
+                setProduct(product); // Opdater produktet
                 setError('');
+                onProductScanned(product); // Send produktet til forældrekomponenten
+                navigate('/actions'); // Naviger til /actions
             } else {
                 setProduct(null);
                 setError('Produkt ikke fundet!');
@@ -40,8 +53,9 @@ const ScannerPage = () => {
             setProduct(null);
             setError('Der opstod en fejl ved hentning af produktet.');
         }
-    }, []);
+    }, [navigate, onProductScanned]);
 
+    // Håndter færdig scanning
     const handleScanComplete = async () => {
         fetchProduct(barcode);
     };

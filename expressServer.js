@@ -4,11 +4,10 @@ const cors = require("cors");
 
 (async () => {
   const app = express();
-  app.use(
-      cors({
-        origin: "*",
-      })
-  );
+  app.use(cors({
+    origin: 'http://localhost:3000', // Tillad anmodninger fra frontend
+    methods: ['GET', 'POST', 'PUT', 'DELETE'], // Tillad de nødvendige HTTP-metoder
+  }));
 
   app.use(express.json());
 
@@ -81,7 +80,8 @@ const cors = require("cors");
     }
   });
 
-  app.put("/api/product/:barcode", async (req, res) => {
+  // Opdateret PUT-endpoint til /api/products/:barcode
+  app.put("/api/products/:barcode", async (req, res) => {
     try {
       const barcode = req.params.barcode;
       const { productBrand, productName, productWeight, retailPrice } = req.body;
@@ -93,11 +93,11 @@ const cors = require("cors");
 
       await db.query(
           `UPDATE products SET
-          brandName = ?,
-          productName = ?,
-          productWeight = ?,
-          retailPrice = ?
-        WHERE barcode = ?`,
+                             brandName = ?,
+                             productName = ?,
+                             productWeight = ?,
+                             retailPrice = ?
+           WHERE barcode = ?`,
           [productBrand, productName, productWeight, retailPrice, barcode]
       );
 

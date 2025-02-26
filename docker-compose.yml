@@ -33,6 +33,18 @@ services:
       interval: 5s
       timeout: 10s
       retries: 10
+
+  react_app:
+    container_name: react_app
+    build:
+      context: .
+      dockerfile: dockerfile.frontend
+    ports:
+      - "3000:80"  # Map port 80 i containeren til port 3000 på værten
+    networks:
+      - backend
+    depends_on:
+      - scan_backend
 networks:
   backend:
     driver: bridge

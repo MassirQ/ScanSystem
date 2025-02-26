@@ -1,8 +1,7 @@
-// components/ProductForm.jsx
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import axios from 'axios';
-import '../App.css'; // Sørg for at inkludere CSS-filen
+import productService from '../services/productService';
+import '../App.css';
 
 const ProductForm = () => {
     const { barcode } = useParams();
@@ -18,19 +17,20 @@ const ProductForm = () => {
     const [successMessage, setSuccessMessage] = useState('');
     const [showModal, setShowModal] = useState(false);
 
+    // Hent produktdata, hvis der er en barcode (redigering)
     useEffect(() => {
         if (barcode) {
             const loadProduct = async () => {
                 try {
-                    const response = await axios.get(`http://localhost:5001/api/product/${barcode}`);
-                    const foundProduct = response.data[0];
-                    if (foundProduct) {
+                    const product = await productService.searchProduct(barcode);
+                    if (product) {
                         setFormData({
-                            barcode: foundProduct.barcode,
-                            productName: foundProduct.productName,
-                            productBrand: foundProduct.productBrand,
-                            productWeight: foundProduct.productWeight,
-                            retailPrice: foundProduct.retailPrice
+                            barcode: product.barcode,
+                            productName: product.productName,
+                            productBrand: product.brandName,
+                            productWeight: product.productWeight,
+                            retailPrice: product.retailPrice,
+                            quantity: product.quantity
                         });
                     } else {
                         setError('Produkt ikke fundet!');
@@ -44,23 +44,17 @@ const ProductForm = () => {
         }
     }, [barcode]);
 
+    // Håndter formularindsendelse
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
             if (barcode) {
-                await axios.put(`http://localhost:5001/api/product/${barcode}`, formData, {
-                    headers: {
-                        'Content-Type': 'application/json',
-                    }
-                });
+                // Opdater produkt
+                await productService.updateProduct(barcode, formData);
                 setSuccessMessage('Produkt opdateret succesfuldt!');
             } else {
-                // Oprettelse af nyt produkt
-                await axios.post(`http://localhost:5001/api/RegisterProducts`, formData, {
-                    headers: {
-                        'Content-Type': 'application/json',
-                    }
-                });
+                // Opret nyt produkt
+                await productService.createProduct(formData);
                 setSuccessMessage('Produkt tilføjet succesfuldt!');
             }
             setShowModal(true);
@@ -75,6 +69,12 @@ const ProductForm = () => {
                 setError(`Anmodningsfejl: ${err.message}`);
             }
         }
+    };
+
+    // Luk modal og naviger til startsiden
+    const handleModalClose = () => {
+        setShowModal(false);
+        navigate('/'); // Gå tilbage til startsiden
     };
 
     return (
@@ -131,6 +131,15 @@ const ProductForm = () => {
                         required
                     />
                 </div>
+                <div className="form-group">
+                    <label>Antal</label>
+                    <input
+                        type="text"
+                        value={formData.quantity}
+                        onChange={(e) => setFormData({ ...formData, quantity: e.target.value })}
+                        required
+                    />
+                </div>
 
                 {error && <p className="error-message">{error}</p>}
 
@@ -153,7 +162,7 @@ const ProductForm = () => {
                     <div className="modal">
                         <h2>Succes!</h2>
                         <p>{successMessage}</p>
-                        <button onClick={() => setShowModal(false)}>Luk</button>
+                        <button onClick={handleModalClose}>Luk</button>
                     </div>
                 </div>
             )}

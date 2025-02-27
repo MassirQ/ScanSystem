@@ -40,7 +40,7 @@ services:
       context: .
       dockerfile: dockerfile.frontend
     ports:
-      - "3000:3000" 
+      - 3000:3000 
     networks:
       - backend
     depends_on:

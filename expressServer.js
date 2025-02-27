@@ -5,8 +5,8 @@ const cors = require("cors");
 (async () => {
   const app = express();
   app.use(cors({
-    origin: 'http://localhost:3000', // Tillad anmodninger fra frontend
-    methods: ['GET', 'POST', 'PUT', 'DELETE'], // Tillad de nødvendige HTTP-metoder
+    origin: 'http://localhost:3000',
+    methods: ['GET', 'POST', 'PUT', 'DELETE'], 
   }));
 
   app.use(express.json());

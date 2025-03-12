@@ -12,7 +12,7 @@ const cors = require("cors");
   app.use(express.json());
 
   const db = await mysql.createConnection({
-    host: "db",
+    host: process.env.DB_HOST || "scan_db",
     user: "root",
     password: "root",
     database: "qb_aal_dk_db_data",

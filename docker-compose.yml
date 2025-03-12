@@ -36,6 +36,7 @@ services:
 
   react_app:
     container_name: react_app
+    env_file: '.env'
     build:
       context: .
       dockerfile: dockerfile.frontend

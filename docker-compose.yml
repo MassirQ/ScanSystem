@@ -11,7 +11,7 @@ services:
       context: .
       dockerfile: dockerfile
     ports:
-      - 5001:5001
+      - "5001:5001"
   db:
     networks:
       - backend
@@ -40,7 +40,7 @@ services:
       context: .
       dockerfile: dockerfile.frontend
     ports:
-      - 3000:3000 
+      - "3000:80"
     networks:
       - backend
     depends_on:

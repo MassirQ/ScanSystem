@@ -1,11 +1,12 @@
 import axios from 'axios';
 
-const API_BASE = 'http://localhost:5001/api';
+const API_BASE = process.env.REACT_APP_API_BASE
 
 
 export default {
     // Søg efter et produkt baseret på stregkode
     searchProduct: async (barcode) => {
+        console.log("Her er vi",API_BASE);
         try {
             const response = await axios.get(`${API_BASE}/product/${barcode}`);
             return response.data; // Returner produktet direkte (ikke som array)

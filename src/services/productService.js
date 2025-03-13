@@ -8,7 +8,8 @@ export default {
     searchProduct: async (barcode) => {
         console.log("Her er vi",API_BASE);
         try {
-            const response = await axios.get(`${API_BASE}/product/${barcode}`);
+            
+            const response = await fetch(`${API_BASE}/product/${barcode}`);
             return response.data; // Returner produktet direkte (ikke som array)
         } catch (error) {
             console.error('Fejl ved søgning efter produkt:', error);

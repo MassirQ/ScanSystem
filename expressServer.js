@@ -5,8 +5,7 @@ const cors = require("cors");
 (async () => {
   const app = express();
   app.use(cors({
-    origin: 'http://react_app:3000',
-    methods: ['GET', 'POST', 'PUT', 'DELETE'], 
+    origin: '*',
   }));
 
   app.use(express.json());

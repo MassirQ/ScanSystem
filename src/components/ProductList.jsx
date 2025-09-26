@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import productService from "../services/productService";
 import "../App.css";
 
@@ -9,6 +9,7 @@ const ProductList = () => {
     const [currentPage, setCurrentPage] = useState(1);
     const [productsPerPage] = useState(50); // Antal produkter pr. side
 
+    const navigate = useNavigate()
     // Hent produkter ved mount
     useEffect(() => {
         const loadProducts = async () => {
@@ -42,6 +43,13 @@ const ProductList = () => {
         <div>
             <div className="product-list-container">
                 <div className="product-list-card">
+                    <button
+                        onClick={() => navigate("/")}
+                        className="btn back-btn"
+                        style={{marginBottom: "20px"}}
+                    >
+                        ⬅️ Tilbage til Scan
+                    </button>
                     <h2>📦 Alle produkter</h2>
                     <input
                         type="text"

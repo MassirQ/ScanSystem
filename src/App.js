@@ -6,6 +6,7 @@ import ProductList from './components/ProductList';
 import ProductForm from './components/ProductForm';
 import './App.css';
 import ProductDetails from "./components/ProductDetails";
+import PriceScan from "./components/PriceScan";
 
 function App() {
     const [scannedProduct, setScannedProduct] = useState(null);
@@ -18,9 +19,7 @@ function App() {
                     <Route
                         path="/"
                         element={
-                            <ScannerPage
-                                onProductScanned={setScannedProduct}
-                            />
+                            <PriceScan />
                         }
                     />
 
@@ -57,6 +56,15 @@ function App() {
                     <Route
                         path="/product-details/:barcode"
                         element={<ProductDetails />} // Opret en ProductDetails-komponent, hvis den ikke allerede findes
+                    />
+                    {/* Vis Drift mode */}
+                    <Route
+                        path="/drift-scanner"
+                        element={ <ScannerPage
+                            onProductScanned={setScannedProduct}
+                        />}
+
+                        // Opret en ProductDetails-komponent, hvis den ikke allerede findes
                     />
                 </Routes>
             </div>

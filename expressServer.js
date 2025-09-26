@@ -83,7 +83,7 @@ const cors = require("cors");
   app.put("/api/products/:barcode", async (req, res) => {
     try {
       const barcode = req.params.barcode;
-      const { productBrand, productName, productWeight, retailPrice } = req.body;
+      const { brandName, productName, productWeight, retailPrice, quantity } = req.body;
 
       const [existing] = await db.query("SELECT * FROM products WHERE barcode = ?", [barcode]);
       if (existing.length === 0) {
@@ -95,9 +95,10 @@ const cors = require("cors");
                              brandName = ?,
                              productName = ?,
                              productWeight = ?,
-                             retailPrice = ?
+                             retailPrice = ?,
+                             quantity = ?
            WHERE barcode = ?`,
-          [productBrand, productName, productWeight, retailPrice, barcode]
+          [brandName, productName, productWeight, retailPrice, quantity, barcode]
       );
 
       res.json({ message: "Produkt opdateret succesfuldt" });
@@ -106,6 +107,7 @@ const cors = require("cors");
       res.status(500).json({ error: "Serverfejl ved opdatering" });
     }
   });
+
 
   app.delete("/api/product/:barcode", async (req, res) => {
     try {

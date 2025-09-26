@@ -53,6 +53,7 @@ const ProductDetails = () => {
                 <p><strong>Brand:</strong> {product.brandName}</p>
                 <p><strong>Vægt:</strong> {product.productWeight}</p>
                 <p><strong>Pris:</strong> {product.retailPrice} DKK</p>
+                <p><strong>Antal:</strong> {product.quantity} </p>
                 {product.imageUrl && <img src={product.imageUrl} alt={product.productName} />}
             </div>
 

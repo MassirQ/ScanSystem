@@ -9,12 +9,11 @@ const ScannerPage = ({ onProductScanned }) => {
     const [error, setError] = useState('');
     const navigate = useNavigate();
 
-    // Nulstil staten, når en vare er scannet og brugeren er navigeret til /actions
     useEffect(() => {
         if (product) {
-            setBarcode(''); // Nulstil stregkoden
-            setProduct(null); // Nulstil produktet
-            setError(''); // Nulstil fejlmeddelelsen
+            setBarcode('');
+            setProduct(null);
+            setError('');
         }
     }, [product]);
 
@@ -34,24 +33,30 @@ const ScannerPage = ({ onProductScanned }) => {
     const fetchProduct = useCallback(async (barcode) => {
         if (!barcode) {
             setProduct(null);
-            setError('Indtast venligst en stregkode.');
+            setError("Indtast venligst en stregkode.");
             return;
         }
         try {
             const product = await productService.searchProduct(barcode);
             if (product) {
-                setProduct(product); // Opdater produktet
-                setError('');
-                onProductScanned(product); // Send produktet til forældrekomponenten
-                navigate('/actions'); // Naviger til /actions
+                setProduct(product);
+                setError("");
+                onProductScanned(product);
+                navigate("/actions");
             } else {
                 setProduct(null);
-                setError('Produkt ikke fundet!');
+                setError("Produkt ikke fundet!");
             }
         } catch (err) {
-            console.error('Fejl ved hentning af produktdata', err);
+            console.error("Fejl ved hentning af produktdata", err);
+
+            if (err.response && err.response.status === 404) {
+                setError("❌ Produktet findes ikke i databasen.");
+            } else {
+                setError("⚠️ Der opstod en serverfejl. Prøv igen senere.");
+            }
+
             setProduct(null);
-            setError('Der opstod en fejl ved hentning af produktet.');
         }
     }, [navigate, onProductScanned]);
 
@@ -93,6 +98,9 @@ const ScannerPage = ({ onProductScanned }) => {
             <nav className="quick-menu">
                 <button className="btn" onClick={() => navigate('/products')}>📦 Alle produkter</button>
                 <button className="btn" onClick={() => navigate('/add-product')}>✍️ Manuel oprettelse</button>
+                <button className="btn" onClick={() => navigate('/')}>
+                    🛒🔍 Drift Scanner
+                </button>
             </nav>
         </div>
     );

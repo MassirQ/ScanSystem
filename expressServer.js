@@ -83,7 +83,7 @@ const cors = require("cors");
   app.put("/api/products/:barcode", async (req, res) => {
     try {
       const barcode = req.params.barcode;
-      const { brandName, productName, productWeight, retailPrice, quantity } = req.body;
+      const { productBrand, productName, productWeight, retailPrice, quantity } = req.body;
 
       const [existing] = await db.query("SELECT * FROM products WHERE barcode = ?", [barcode]);
       if (existing.length === 0) {
@@ -92,13 +92,13 @@ const cors = require("cors");
 
       await db.query(
           `UPDATE products SET
-                             brandName = ?,
+                             productBrand = ?,
                              productName = ?,
                              productWeight = ?,
                              retailPrice = ?,
                              quantity = ?
            WHERE barcode = ?`,
-          [brandName, productName, productWeight, retailPrice, quantity, barcode]
+          [productBrand, productName, productWeight, retailPrice, quantity, barcode]
       );
 
       res.json({ message: "Produkt opdateret succesfuldt" });

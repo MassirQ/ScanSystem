@@ -92,7 +92,7 @@ const cors = require("cors");
 
       await db.query(
           `UPDATE products SET
-                             productBrand = ?,
+                             brandName = ?,
                              productName = ?,
                              productWeight = ?,
                              retailPrice = ?,

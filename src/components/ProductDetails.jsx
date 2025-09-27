@@ -62,7 +62,7 @@ const ProductDetails = () => {
                 <button className="btn" onClick={() => navigate('/products')}>📦 Alle produkter</button>
                 <button className="btn" onClick={() => navigate('/add-product')}>✍️ Manuel oprettelse</button>
                 <button className="btn" onClick={() => navigate(`/edit-product/${product.barcode}`)}>✏️ Rediger produkt </button>
-                <button className="btn" onClick={() => navigate('/')}>🛒 Tilbage til Scan</button>
+                <button className="btn" onClick={() => navigate('/drift-scanner')}>🛒 Tilbage til Scan</button>
             </nav>
         </div>
     );

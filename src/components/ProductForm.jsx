@@ -91,6 +91,15 @@ const ProductForm = () => {
                         disabled={!!barcode}
                     />
                 </div>
+                  <div className="form-group">
+                    <label>Produktbrand:</label>
+                    <input
+                        type="text"
+                        value={formData.productBrand}
+                        onChange={(e) => setFormData({ ...formData, productBrand: e.target.value })}
+                        required
+                    />
+                </div>
 
                 <div className="form-group">
                     <label>Produktnavn:</label>
@@ -102,15 +111,7 @@ const ProductForm = () => {
                     />
                 </div>
 
-                <div className="form-group">
-                    <label>Produktbrand:</label>
-                    <input
-                        type="text"
-                        value={formData.productBrand}
-                        onChange={(e) => setFormData({ ...formData, productBrand: e.target.value })}
-                        required
-                    />
-                </div>
+              
 
                 <div className="form-group">
                     <label>Produktvægt:</label>

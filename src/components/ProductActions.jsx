@@ -54,7 +54,7 @@ const ProductActions = ({ product, onBack }) => {
                 <button className="btn" onClick={handlePrint}>🖨️ Print prisskilt</button>
                 <button className="btn" onClick={() => navigate(`/edit-product/${product.barcode}`)}>✏️ Rediger produkt</button>
                 <button className="btn" onClick={() => navigate(`/product-details/${product.barcode}`)}>🔍 Vis detaljer</button>
-                <button className="btn" onClick={()=>navigate('/')}>⬅️ Tilbage til scanner</button>
+                <button className="btn" onClick={()=>navigate('/drift-scanner')}>⬅️ Tilbage til scanner</button>
             </nav>
         </div>
     );

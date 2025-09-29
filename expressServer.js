@@ -9,15 +9,19 @@ const cors = require("cors");
   }));
 
   app.use(express.json());
-
-  const db = await mysql.createConnection({
+let db;
+  try {
+  db = await mysql.createConnection({
     host: process.env.DB_HOST || "scan_db",
     user: "root",
     password: "root",
     database: "qb_aal_dk_db_data",
   });
+    console.log("Forbundet til MySQL!");
 
-  console.log("Forbundet til MySQL!");
+  } catch (err) {
+    console.error("Kunne ikke forbinde til databasen:", err.message);
+  }
 
   app.get("/api/products", async (req, res) => {
     try {
@@ -79,7 +83,6 @@ const cors = require("cors");
     }
   });
 
-  // Opdateret PUT-endpoint til /api/products/:barcode
   app.put("/api/products/:barcode", async (req, res) => {
     try {
       const barcode = req.params.barcode;
@@ -124,6 +127,12 @@ const cors = require("cors");
       res.status(500).json({ error: "Serverfejl ved sletning" });
     }
   });
+
+  app.use((err, req, res) => {
+    console.error("Global fejl:", err);
+    res.status(500).json({ error: "Der opstod en serverfejl. Tjek loggen." });
+  });
+
 
   const PORT = 5001;
   app.listen(PORT, () => {

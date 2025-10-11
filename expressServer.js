@@ -30,14 +30,13 @@ let db;
   } catch (err) {
     console.error('MySQL keep-alive error:', err);
   }
-}, 100 * 60 * 5);
+}, 1000 * 60 * 15);
 
   app.get("/api/products", async (req, res) => {
     try {
       const query = "SELECT * FROM products";
       const [rows] = await db.query(query);
       res.status(200).json(rows);
-      console.log("data: ", [rows]);
     } catch (error) {
       res.status(500).json({ error: "Fejl ved hentning af produkter" });
     }
@@ -49,7 +48,6 @@ let db;
       const query = "SELECT * FROM products WHERE barcode = ?";
       const [results] = await db.query(query, [barcode]);
 
-      console.log("data: ", [results]);
 
       if (results.length === 0) {
         res.status(404).json({ error: "Produktet er ikke registreret" });
@@ -64,7 +62,6 @@ let db;
   app.post("/api/RegisterProducts", async (req, res) => {
     try {
       const { barcode, productBrand, productName, productWeight, retailPrice } = req.body;
-      console.log("data: ", req.body);
 
       if (!barcode || !productBrand || !productName || !productWeight || !retailPrice) {
         return res.status(400).json({ error: "Alle felter skal udfyldes" });
@@ -100,7 +97,6 @@ let db;
     try {
       const barcode = req.params.barcode;
       const { productBrand, productName, productWeight, retailPrice, quantity } = req.body;
-            console.log("data: ", req.body);
 
 
       const [existing] = await db.query("SELECT * FROM products WHERE barcode = ?", [barcode]);
@@ -131,7 +127,6 @@ let db;
     try {
       const barcode = req.params.barcode;
       const [result] = await db.query("DELETE FROM products WHERE barcode = ?", [barcode]);
-            console.log("data: ", [result] );
 
 
       if (result.affectedRows === 0) {

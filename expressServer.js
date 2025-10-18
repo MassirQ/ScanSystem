@@ -61,8 +61,24 @@ let db;
 
   app.post("/api/RegisterProducts", async (req, res) => {
     try {
-      const { barcode, productBrand, productName, productWeight, retailPrice } = req.body;
-
+      const {
+        barcode,
+          productBrand,
+        productName,
+        productWeight,
+        retailPrice,
+        quantity,
+        warehouseQuantity,
+        purchasePrice,
+        invoiceNumber ,
+        productCategory,
+        productPackaging,
+        productWeightUnit,
+        purchasePriceUnit,
+        expiryDate ,
+        origin ,
+        retailPriceUnit
+      } = req.body;
       if (!barcode || !productBrand || !productName || !productWeight || !retailPrice) {
         return res.status(400).json({ error: "Alle felter skal udfyldes" });
       }
@@ -79,8 +95,46 @@ let db;
       const imageUrl = `https://qbaalborg.s3.eu-north-1.amazonaws.com/${barcode}.jpg`;
 
       await db.query(
-          "INSERT INTO products (id, barcode, retailPrice, brandName, productName, productWeight, imageUrl) VALUES (?, ?, ?, ?, ?, ?, ?)",
-          [nextId, barcode, retailPrice, productBrand, productName, productWeight, imageUrl]
+          `INSERT INTO products (
+         id,
+         barcode,
+         retailPrice,
+         brandName,
+         productName,
+         productWeight,
+         imageUrl,
+         quantity,
+         warehouseQuantity,
+         purchasePrice,
+         invoiceNumber,
+         productCategory,
+         productPackaging,
+         productWeightUnit,
+         purchasePriceUnit,
+         expiryDate,
+         origin,
+         retailPriceUnit
+       ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+          [
+            nextId,
+            barcode,
+            retailPrice,
+              productBrand,
+            productName,
+            productWeight,
+            imageUrl,
+            quantity,
+            warehouseQuantity,
+            purchasePrice,
+            invoiceNumber,
+            productCategory,
+            productPackaging,
+            productWeightUnit,
+            purchasePriceUnit,
+            expiryDate,
+            origin,
+            retailPriceUnit
+          ]
       );
 
       res.status(201).json({
@@ -96,8 +150,23 @@ let db;
   app.put("/api/products/:barcode", async (req, res) => {
     try {
       const barcode = req.params.barcode;
-      const { productBrand, productName, productWeight, retailPrice, quantity } = req.body;
-
+      const {
+        productBrand,
+        productName,
+        productWeight,
+        retailPrice,
+        quantity,
+        warehouseQuantity,
+        purchasePrice,
+        invoiceNumber ,
+        productCategory,
+        productPackaging,
+        productWeightUnit,
+        purchasePriceUnit,
+        expiryDate ,
+        origin ,
+        retailPriceUnit
+      } = req.body;
 
       const [existing] = await db.query("SELECT * FROM products WHERE barcode = ?", [barcode]);
       if (existing.length === 0) {
@@ -110,11 +179,37 @@ let db;
                              productName = ?,
                              productWeight = ?,
                              retailPrice = ?,
-                             quantity = ?
+                             quantity = ?,
+                             warehouseQuantity = ?,
+                             purchasePrice = ?,
+                             invoiceNumber = ?,
+                             productCategory = ?,
+                             productPackaging = ?,
+                             productWeightUnit = ?,
+                             purchasePriceUnit = ?,
+                             expiryDate = ?,
+                             origin = ?,
+                             retailPriceUnit = ?
            WHERE barcode = ?`,
-          [productBrand, productName, productWeight, retailPrice, quantity, barcode]
+          [
+            productBrand,
+            productName,
+            productWeight,
+            retailPrice,
+            quantity,
+            warehouseQuantity,
+            purchasePrice,
+            invoiceNumber,
+            productCategory,
+            productPackaging,
+            productWeightUnit,
+            purchasePriceUnit,
+            expiryDate,
+            origin,
+            retailPriceUnit,
+            barcode
+          ]
       );
-
       res.json({ message: "Produkt opdateret succesfuldt" });
     } catch (error) {
       console.error("Fejl:", error);
@@ -139,6 +234,56 @@ let db;
       res.status(500).json({ error: "Serverfejl ved sletning" });
     }
   });
+
+
+
+
+  app.put("/api/products/update-quantity-warehouse/:barcode", async (req, res) => {
+    const { warehouseQuantity } = req.body;
+    const { barcode } = req.params;
+
+    if (warehouseQuantity == null) {
+      return res.status(400).json({ message: "Indsæt antallet af varer du har på lager" });
+    }
+
+    try {
+      await db.query(
+          `UPDATE products
+           SET warehouseQuantity = ?
+           WHERE barcode = ?`,
+          [warehouseQuantity, barcode]
+      );
+
+      res.json({ message: "Produkt opdateret!" });
+    } catch (err) {
+      console.error("Fejl ved opdatering af produkt:", err);
+      res.status(500).json({ message: "Serverfejl ved opdatering" });
+    }
+  });
+
+
+  app.put("/api/products/update-quantity/:barcode", async (req, res) => {
+    const { quantity } = req.body;
+    const { barcode } = req.params;
+
+    if (quantity == null) {
+      return res.status(400).json({ message: "Indsæt antallet af den vare du har" });
+    }
+    try {
+      await db.query(
+          `UPDATE products
+          SET quantity = ?
+          WHERE barcode = ?`,
+          [quantity, barcode]
+      );
+      res.json({ message: "Produkt opdateret!" });
+    }
+    catch (e) {
+      console.error("Fejl ved opdatering af produkt:", e);
+      res.status(500).json({ message: "Serverfejl ved opdatering" });
+    }
+
+  })
 
   app.use((err, req, res) => {
     console.error("Global fejl:", err);

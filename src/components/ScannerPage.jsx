@@ -101,6 +101,8 @@ const ScannerPage = ({ onProductScanned }) => {
                 <button className="btn" onClick={() => navigate('/')}>
                     🛒🔍 Drift Scanner
                 </button>
+                <button className="btn" onClick={() => navigate('/update-quantity')}>🏪 Opdater butikslager</button>
+                <button className="btn" onClick={() => navigate('/update-warehouse')}>🏬 Opdater hovedlager</button>
             </nav>
         </div>
     );

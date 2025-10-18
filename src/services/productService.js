@@ -58,7 +58,34 @@ export default {
             console.error('Fejl ved sletning af produkt:', error);
             throw error;
         }
+    },
+
+    updateWarehouseQuantity: async (barcode, productData) => {
+        try {
+            const response = await axios.put(`${API_BASE}/products/update-quantity-warehouse/${barcode}`, productData);
+            return response.data;
+        }
+        catch (error) {
+            console.error('Fejl ved opdatering af produkt:', error);
+            throw error;
+        }
+    },
+
+
+    updateQuantity: async (barcode, productData) => {
+        try {
+            const response = await axios.put(`${API_BASE}/products/update-quantity/${barcode}`, productData);
+            return response.data;
+        }
+        catch (error) {
+            console.error('Fejl ved opdatering af produkt:', error);
+            throw error;
+        }
     }
+
+
+
+
 
 
 

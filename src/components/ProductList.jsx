@@ -10,7 +10,6 @@ const ProductList = () => {
     const [productsPerPage] = useState(50); // Antal produkter pr. side
 
     const navigate = useNavigate()
-    // Hent produkter ved mount
     useEffect(() => {
         const loadProducts = async () => {
             try {
@@ -23,7 +22,6 @@ const ProductList = () => {
         loadProducts();
     }, []);
 
-    // Filtrer produkter baseret på søgeterm
     const filteredProducts = products.filter(
         (product) =>
             product.productName.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -31,12 +29,10 @@ const ProductList = () => {
             product.brandName.toLowerCase().includes(searchTerm.toLowerCase())
     );
 
-    // Pagination-logik
     const indexOfLastProduct = currentPage * productsPerPage;
     const indexOfFirstProduct = indexOfLastProduct - productsPerPage;
     const currentProducts = filteredProducts.slice(indexOfFirstProduct, indexOfLastProduct);
 
-    // Skift side
     const paginate = (pageNumber) => setCurrentPage(pageNumber);
 
     return (
